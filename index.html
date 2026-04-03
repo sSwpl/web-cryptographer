@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web_Cryptographer - Terminal</title>
+    <style>
+        /* GŁÓWNE USTAWIENIA HAKERSKIEGO WYGLĄDU */
+        body {
+            background-color: #050505; /* Prawie czarny */
+            color: #00FF41; /* Klasyczny hacker green */
+            font-family: 'Courier New', Courier, monospace; /* Czcionka maszynowa/terminalowa */
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* LEWY PANEL - EKSPLORATOR PLIKÓW */
+        #sidebar {
+            width: 300px;
+            border-right: 2px dashed #00FF41; /* Kreskowana linia oddzielająca */
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #000000;
+        }
+
+        /* PRAWY PANEL - OBSZAR ROBOCZY (STRONY) */
+        #content {
+            padding: 30px;
+            flex-grow: 1;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* DRZEWO PLIKÓW Z ASCII ART */
+        ul {
+            list-style-type: none; /* Ukrywa standardowe kropki listy */
+            padding-left: 0;
+            margin: 0;
+        }
+        ul ul {
+            padding-left: 20px;
+        }
+        
+        .folder {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .file {
+            cursor: pointer;
+            color: #00FF41;
+            transition: all 0.2s;
+        }
+        
+        /* Efekt najechania na plik */
+        .file:hover {
+            background-color: #00FF41;
+            color: #000000;
+        }
+
+        /* LOGIKA PRZEŁĄCZANIA STRON */
+        .page {
+            display: none; /* Ukrywa wszystkie strony domyślnie */
+        }
+        .active {
+            display: block; /* Pokazuje tylko aktywną stronę */
+        }
+
+        /* MRUGAJĄCY KURSOR DLA KLIMATU */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background-color: #00FF41;
+            animation: blink 1s step-end infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <div class="folder">C:\Web_Cryptographer></div>
+        <ul>
+            <li>[DIR] root/
+                <ul>
+                    <li>├── <span class="file" onclick="loadPage('caesar')">caesarCipher.py</span></li>
+                    <li>└── <span class="file" onclick="loadPage('vigenere')">vigenereCipher.py</span></li>
+                </ul>
+            </li>
+        </ul>
+        <br>
+        <div>> Status: Online<span class="cursor"></span></div>
+    </div>
+
+    <div id="content">
+        
+        <div id="home" class="page active">
+            <h2>SYSTEM ZAINICJOWANY.</h2>
+            <p>Wybierz moduł kryptograficzny z drzewa katalogów po lewej stronie.</p>
+        </div>
+
+        <div id="caesar" class="page">
+            <h2>=== SZYFR CEZARA ===</h2>
+            <p><strong>Plik:</strong> caesarCipher.py</p>
+            <p><strong>Status:</strong> Oczekiwanie na implementację PyScript...</p>
+            <br>
+            <p>[ Tutaj w przyszłości pojawi się pole do wpisywania tekstu i Twój kod w Pythonie ]</p>
+        </div>
+
+        <div id="vigenere" class="page">
+            <h2>=== SZYFR VIGENERE'A ===</h2>
+            <p><strong>Plik:</strong> vigenereCipher.py</p>
+            <p><strong>Status:</strong> Moduł w budowie...</p>
+            <br>
+            <p>[ Tutaj w przyszłości pojawi się drugi skrypt ]</p>
+        </div>
+
+    </div>
+
+    <script>
+        function loadPage(pageId) {
+            // 1. Znajdź wszystkie elementy z klasą 'page' i je ukryj
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // 2. Znajdź wybraną stronę po jej ID i ją pokaż
+            const selectedPage = document.getElementById(pageId);
+            if (selectedPage) {
+                selectedPage.classList.add('active');
+            }
+        }
+    </script>
+
+</body>
+</html>
