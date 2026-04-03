@@ -1,5 +1,4 @@
-text = input("Enter the text to encrypt: ")
-shift = int(input("Enter the shift value: "))
+from pyscript import document
 
 def encrypt(text, shift):
     encrypted_text = ""
@@ -15,5 +14,12 @@ def encrypt(text, shift):
             encrypted_text += char
     return encrypted_text
 
-encrypted = encrypt(text, shift)
-print("Encrypted text:", encrypted)
+def encrypt_action(event):
+    text = document.querySelector("#input-enc-caesar").value
+    shift_val = document.querySelector("#shift-enc-caesar").value
+    
+    shift = int(shift_val) if shift_val else 0
+        
+    encrypted = encrypt(text, shift)
+    
+    document.querySelector("#output-enc-caesar").innerText = encrypted

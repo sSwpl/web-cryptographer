@@ -123,14 +123,16 @@
 
         <div id="enc-caesar" class="page">
             <h2>=== SZYFROWANIE: CEZAR ===</h2>
-            <p>Wprowadź tekst jawny do zaszyfrowania:</p>
-            <input type="text" id="input-enc-caesar" placeholder="Twoja wiadomość...">
+            <input type="text" id="input-enc-caesar" placeholder="Tekst do zaszyfrowania...">
             <br>
-            <button py-click="run_caesar_encrypt">SZYFRUJ</button>
+            <input type="number" id="shift-enc-caesar" placeholder="Przesunięcie (np. 3)">
+            <br>
+            <button py-click="encrypt_action">SZYFRUJ</button>
             <br><br>
-            <p>Wynik: <span id="output-enc-caesar"></span></p>
+            <p>Wynik:</p>
+            <div id="output-enc-caesar" style="white-space: pre-wrap; color: #fff;"></div>
 
-            <script type="py" src="./encryption/caesar_enc.py"></script>
+            <script type="py" src="./encryption/encaesarCipher.py"></script>
         </div>
 
         <div id="enc-vigenere" class="page">
@@ -140,7 +142,16 @@
 
         <div id="dec-caesar" class="page">
             <h2>=== DESZYFROWANIE: CEZAR ===</h2>
-            <p>Moduł w budowie...</p>
+            <input type="text" id="input-dec-caesar" placeholder="Tekst do odszyfrowania...">
+            <br>
+            <input type="text" id="shift-dec-caesar" placeholder="Przesunięcie (zostaw puste = brute force)">
+            <br>
+            <button py-click="decrypt_action">DESZYFRUJ</button>
+            <br><br>
+            <p>Wynik:</p>
+            <div id="output-dec-caesar" style="white-space: pre-wrap; color: #fff;"></div>
+
+            <script type="py" src="./decryption/decaesarCipher.py"></script>
         </div>
 
         <div id="dec-vigenere" class="page">
