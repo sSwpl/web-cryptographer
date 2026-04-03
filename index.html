@@ -4,28 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web_Cryptographer - Terminal</title>
+    
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+
     <style>
-        /* GŁÓWNE USTAWIENIA HAKERSKIEGO WYGLĄDU */
         body {
-            background-color: #050505; /* Prawie czarny */
-            color: #00FF41; /* Klasyczny hacker green */
-            font-family: 'Courier New', Courier, monospace; /* Czcionka maszynowa/terminalowa */
+            background-color: #050505;
+            color: #00FF41;
+            font-family: 'Courier New', Courier, monospace;
             display: flex;
             height: 100vh;
             margin: 0;
             overflow: hidden;
         }
 
-        /* LEWY PANEL - EKSPLORATOR PLIKÓW */
         #sidebar {
-            width: 300px;
-            border-right: 2px dashed #00FF41; /* Kreskowana linia oddzielająca */
+            width: 350px;
+            border-right: 2px dashed #00FF41;
             padding: 20px;
             box-sizing: border-box;
             background-color: #000000;
         }
 
-        /* PRAWY PANEL - OBSZAR ROBOCZY (STRONY) */
         #content {
             padding: 30px;
             flex-grow: 1;
@@ -33,110 +34,142 @@
             position: relative;
         }
 
-        /* DRZEWO PLIKÓW Z ASCII ART */
-        ul {
-            list-style-type: none; /* Ukrywa standardowe kropki listy */
-            padding-left: 0;
-            margin: 0;
-        }
-        ul ul {
-            padding-left: 20px;
-        }
+        ul { list-style-type: none; padding-left: 0; margin: 0; }
+        ul ul { padding-left: 20px; }
         
-        .folder {
+        .folder-title { font-weight: bold; margin-bottom: 15px; }
+
+        /* Style dla klikalnych folderów */
+        .folder-toggle {
+            cursor: pointer;
             font-weight: bold;
-            margin-bottom: 5px;
+            color: #00FF41;
+            transition: all 0.2s;
         }
+        .folder-toggle:hover {
+            background-color: #00FF41;
+            color: #000000;
+        }
+
+        /* Ukrywanie zawartości folderów domyślnie */
+        .nested { display: none; }
+        .active-folder { display: block; }
 
         .file {
             cursor: pointer;
             color: #00FF41;
             transition: all 0.2s;
         }
-        
-        /* Efekt najechania na plik */
-        .file:hover {
-            background-color: #00FF41;
-            color: #000000;
-        }
+        .file:hover { background-color: #00FF41; color: #000000; }
 
-        /* LOGIKA PRZEŁĄCZANIA STRON */
-        .page {
-            display: none; /* Ukrywa wszystkie strony domyślnie */
-        }
-        .active {
-            display: block; /* Pokazuje tylko aktywną stronę */
-        }
+        .page { display: none; }
+        .active-page { display: block; }
 
-        /* MRUGAJĄCY KURSOR DLA KLIMATU */
         .cursor {
             display: inline-block;
-            width: 10px;
-            height: 20px;
+            width: 10px; height: 18px;
             background-color: #00FF41;
             animation: blink 1s step-end infinite;
             vertical-align: text-bottom;
         }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
+        /* Terminalowe pola tekstowe i przyciski */
+        input[type="text"] {
+            background-color: #000; color: #00FF41;
+            border: 1px solid #00FF41; padding: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            width: 80%; margin-bottom: 10px;
         }
+        button {
+            background-color: #000; color: #00FF41;
+            border: 1px solid #00FF41; padding: 5px 15px;
+            font-family: 'Courier New', Courier, monospace;
+            cursor: pointer;
+        }
+        button:hover { background-color: #00FF41; color: #000; }
     </style>
 </head>
 <body>
 
     <div id="sidebar">
-        <div class="folder">C:\Web_Cryptographer></div>
+        <div class="folder-title">C:\Web_Cryptographer></div>
         <ul>
-            <li>[DIR] root/
-                <ul>
-                    <li>├── <span class="file" onclick="loadPage('caesar')">caesarCipher.py</span></li>
-                    <li>└── <span class="file" onclick="loadPage('vigenere')">vigenereCipher.py</span></li>
+            <li>
+                <span class="folder-toggle" onclick="toggleFolder('dir-enc', this)">[+] encryption/</span>
+                <ul id="dir-enc" class="nested">
+                    <li>├── <span class="file" onclick="loadPage('enc-caesar')">caesarCipher.py</span></li>
+                    <li>└── <span class="file" onclick="loadPage('enc-vigenere')">vigenereCipher.py</span></li>
+                </ul>
+            </li>
+            <br>
+            <li>
+                <span class="folder-toggle" onclick="toggleFolder('dir-dec', this)">[+] decryption/</span>
+                <ul id="dir-dec" class="nested">
+                    <li>├── <span class="file" onclick="loadPage('dec-caesar')">caesarCipher.py</span></li>
+                    <li>└── <span class="file" onclick="loadPage('dec-vigenere')">vigenereCipher.py</span></li>
                 </ul>
             </li>
         </ul>
-        <br>
+        <br><br>
         <div>> Status: Online<span class="cursor"></span></div>
     </div>
 
     <div id="content">
-        
-        <div id="home" class="page active">
+        <div id="home" class="page active-page">
             <h2>SYSTEM ZAINICJOWANY.</h2>
-            <p>Wybierz moduł kryptograficzny z drzewa katalogów po lewej stronie.</p>
+            <p>Wybierz moduł z drzewa katalogów po lewej stronie.</p>
         </div>
 
-        <div id="caesar" class="page">
-            <h2>=== SZYFR CEZARA ===</h2>
-            <p><strong>Plik:</strong> caesarCipher.py</p>
-            <p><strong>Status:</strong> Oczekiwanie na implementację PyScript...</p>
+        <div id="enc-caesar" class="page">
+            <h2>=== SZYFROWANIE: CEZAR ===</h2>
+            <p>Wprowadź tekst jawny do zaszyfrowania:</p>
+            <input type="text" id="input-enc-caesar" placeholder="Twoja wiadomość...">
             <br>
-            <p>[ Tutaj w przyszłości pojawi się pole do wpisywania tekstu i Twój kod w Pythonie ]</p>
+            <button py-click="run_caesar_encrypt">SZYFRUJ</button>
+            <br><br>
+            <p>Wynik: <span id="output-enc-caesar"></span></p>
+
+            <script type="py" src="./encryption/caesar_enc.py"></script>
         </div>
 
-        <div id="vigenere" class="page">
-            <h2>=== SZYFR VIGENERE'A ===</h2>
-            <p><strong>Plik:</strong> vigenereCipher.py</p>
-            <p><strong>Status:</strong> Moduł w budowie...</p>
-            <br>
-            <p>[ Tutaj w przyszłości pojawi się drugi skrypt ]</p>
+        <div id="enc-vigenere" class="page">
+            <h2>=== SZYFROWANIE: VIGENERE'A ===</h2>
+            <p>Moduł w budowie...</p>
         </div>
 
+        <div id="dec-caesar" class="page">
+            <h2>=== DESZYFROWANIE: CEZAR ===</h2>
+            <p>Moduł w budowie...</p>
+        </div>
+
+        <div id="dec-vigenere" class="page">
+            <h2>=== DESZYFROWANIE: VIGENERE'A ===</h2>
+            <p>Moduł w budowie...</p>
+        </div>
     </div>
 
     <script>
-        function loadPage(pageId) {
-            // 1. Znajdź wszystkie elementy z klasą 'page' i je ukryj
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(page => {
-                page.classList.remove('active');
-            });
+        // Funkcja do rozwijania folderów
+        function toggleFolder(folderId, element) {
+            const folder = document.getElementById(folderId);
+            if (folder.classList.contains('active-folder')) {
+                folder.classList.remove('active-folder');
+                element.innerText = element.innerText.replace('[-]', '[+]');
+            } else {
+                folder.classList.add('active-folder');
+                element.innerText = element.innerText.replace('[+]', '[-]');
+            }
+        }
 
-            // 2. Znajdź wybraną stronę po jej ID i ją pokaż
+        // Funkcja do przełączania stron
+        function loadPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active-page'));
+            
             const selectedPage = document.getElementById(pageId);
             if (selectedPage) {
-                selectedPage.classList.add('active');
+                selectedPage.classList.add('active-page');
             }
         }
     </script>
